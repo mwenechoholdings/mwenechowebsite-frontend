@@ -124,17 +124,38 @@ const Contact = () => {
         return null;
       }
 
-      return `https://www.google.com/maps?q=${latitude},${longitude}&z=${zoom}&output=embed`;
+      const bbox = 0.01 / Math.pow(2, zoom - 15);
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - bbox},${latitude - bbox},${longitude + bbox},${latitude + bbox}&layer=mapnik&marker=${latitude},${longitude}`;
     }
 
     if (webDetails?.business_address) {
-      return `https://www.google.com/maps?q=${encodeURIComponent(webDetails.business_address)}&z=15&output=embed`;
+      return `https://www.openstreetmap.org/search?query=${encodeURIComponent(webDetails.business_address)}`;
+    }
+
+    return null;
+  };
+
+  const getMapLinkUrl = () => {
+    if (webDetails?.map_latitude != null && webDetails?.map_longitude != null) {
+      const latitude = Number(webDetails.map_latitude);
+      const longitude = Number(webDetails.map_longitude);
+
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        return null;
+      }
+
+      return `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}`;
+    }
+
+    if (webDetails?.business_address) {
+      return `https://www.openstreetmap.org/search?query=${encodeURIComponent(webDetails.business_address)}`;
     }
 
     return null;
   };
 
   const mapEmbedUrl = getMapEmbedUrl();
+  const mapLinkUrl = getMapLinkUrl();
 
   return (
     <div className="min-h-screen">
@@ -252,7 +273,7 @@ const Contact = () => {
               {mapEmbedUrl && (
                 <Card>
                   <CardContent className="p-6">
-                    <h3 className="font-bold text-foreground mb-4">Find Us on Google Maps</h3>
+                    <h3 className="font-bold text-foreground mb-4">Find Us on OpenStreetMap</h3>
                     <div className="overflow-hidden rounded-xl border border-border">
                       <iframe
                         title="Company location"
@@ -262,6 +283,16 @@ const Contact = () => {
                         referrerPolicy="no-referrer-when-downgrade"
                       />
                     </div>
+                    {mapLinkUrl && (
+                      <a
+                        href={mapLinkUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-3 inline-flex text-sm text-primary hover:text-accent transition-colors"
+                      >
+                        Open in OpenStreetMap
+                      </a>
+                    )}
                   </CardContent>
                 </Card>
               )}

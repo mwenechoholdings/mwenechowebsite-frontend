@@ -11,7 +11,31 @@ import Masonry from "react-masonry-css";
 import { fetchGalleryImages, API_BASE_URL } from "@/service/api"; 
 
 
-const imageUrlPrefix=API_BASE_URL.replace('/api/','');
+const imageUrlPrefix = API_BASE_URL.replace('/api/', '');
+
+const resolveGalleryImageUrl = (imageUrl) => {
+    if (!imageUrl) return '';
+
+    // Ensure we have a string, trim whitespace
+    const normalizedUrl = imageUrl.toString().trim();
+
+    // Some backend responses escape slashes (e.g. "https:\/\/res.cloudinary.com\/...")
+    // Unescape those sequences so the URL becomes a valid browser URL.
+    const unescaped = normalizedUrl.replace(/\\\//g, '/');
+
+    // If it's already an absolute URL after unescaping, return it as-is
+    if (/^https?:\/\//i.test(unescaped)) {
+        return unescaped;
+    }
+
+    // Handle Laravel storage paths returned from the API
+    if (unescaped.startsWith('/storage/')) {
+        return imageUrlPrefix + unescaped.replace('/storage/', '/storage/app/public/');
+    }
+
+    // Fallback: prefix with API base
+    return imageUrlPrefix + unescaped;
+};
 
 const Gallery = () => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -99,7 +123,7 @@ const Gallery = () => {
                             <div 
                                 key={index} 
                                 onClick={() => setSelectedImage({ 
-                                    src: imageUrlPrefix + image.image_url.replace('storage/','storage/app/public/'), 
+                                    src: resolveGalleryImageUrl(image.image_url), 
                                     alt: image.caption,
                                     category: image.category
                                 })}
@@ -110,7 +134,7 @@ const Gallery = () => {
                                            transition-all duration-500 hover:scale-[1.02]"
                             >
                                 <img 
-                                    src={imageUrlPrefix + image.image_url.replace('storage/','storage/app/public/')} 
+                                    src={resolveGalleryImageUrl(image.image_url)} 
                                     alt={image.caption} 
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                 />
