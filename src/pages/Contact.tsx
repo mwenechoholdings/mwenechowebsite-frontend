@@ -115,6 +115,7 @@ const Contact = () => {
   };
 
   const getMapEmbedUrl = () => {
+    // Prefer explicit coordinates when available
     if (webDetails?.map_latitude != null && webDetails?.map_longitude != null) {
       const latitude = Number(webDetails.map_latitude);
       const longitude = Number(webDetails.map_longitude);
@@ -124,12 +125,12 @@ const Contact = () => {
         return null;
       }
 
-      const bbox = 0.01 / Math.pow(2, zoom - 15);
-      return `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - bbox},${latitude - bbox},${longitude + bbox},${latitude + bbox}&layer=mapnik&marker=${latitude},${longitude}`;
+      // Simple Google Maps embed using query lat,lng — works without API key for basic embeds
+      return `https://www.google.com/maps?q=${latitude},${longitude}&z=${zoom}&output=embed`;
     }
 
     if (webDetails?.business_address) {
-      return `https://www.openstreetmap.org/search?query=${encodeURIComponent(webDetails.business_address)}`;
+      return `https://www.google.com/maps?q=${encodeURIComponent(webDetails.business_address)}&output=embed`;
     }
 
     return null;
@@ -139,16 +140,17 @@ const Contact = () => {
     if (webDetails?.map_latitude != null && webDetails?.map_longitude != null) {
       const latitude = Number(webDetails.map_latitude);
       const longitude = Number(webDetails.map_longitude);
+      const zoom = Number(webDetails.map_zoom ?? 15) || 15;
 
       if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
         return null;
       }
 
-      return `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}`;
+      return `https://www.google.com/maps?q=${latitude},${longitude}&z=${zoom}`;
     }
 
     if (webDetails?.business_address) {
-      return `https://www.openstreetmap.org/search?query=${encodeURIComponent(webDetails.business_address)}`;
+      return `https://www.google.com/maps?q=${encodeURIComponent(webDetails.business_address)}`;
     }
 
     return null;
