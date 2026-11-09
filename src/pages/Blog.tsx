@@ -8,7 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/PageHero";
 import { Calendar, User, ArrowRight, Loader2 } from "lucide-react";
+import ecoLodge from "@/assets/eco-lodge.jpg";
 // Import the new reusable component
 import StayUpdatedCta from "@/components/StayUpdatedCta"; // This now imports the version with the form
 
@@ -47,20 +49,32 @@ interface PaginationMeta {
  * This handles cases where Laravel might embed a partial or incorrect domain in the path.
  */
 const getFullImageUrl = (imagePath: string): string => {
-    // Get the base asset host from the API_BASE_URL (http://127.0.0.1:8000/api/)
-    // and remove the '/api/' part to get the base URL (http://127.0.0.1:8000)
-    const assetHost = API_BASE_URL.replace('/api/', ''); 
-    
-    if (imagePath && imagePath.startsWith('/storage/')) {
-        // Clean up the path by removing any hardcoded domain if Laravel embedded it
-        // Example: /storage/http://mwenecho.com/images/blog/636.jpg -> /storage/images/blog/636.jpg
-        const cleanPath = imagePath.replace(/\/storage\/http:\/\/[^/]+\//, '/storage/');
-        
-        // Prepend the environment-defined asset host
-        return `${assetHost}${cleanPath}`; 
-    }
-    return '';
+    const assetHost = API_BASE_URL.replace(/\/api\/?$/, '');
+
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    if (imagePath.startsWith('/src/') || imagePath.startsWith('src/')) return imagePath;
+    if (imagePath.startsWith('/assets/') || imagePath.startsWith('assets/')) return imagePath;
+
+    const normalizedPath = imagePath.startsWith('/')
+        ? imagePath.replace(/\/storage\/http:\/\/[^/]+\//, '/storage/')
+        : `/${imagePath}`;
+
+    return `${assetHost}${normalizedPath}`;
 };
+
+const fallbackPosts: BlogPost[] = [
+    {
+        id: 1,
+        title: 'Sustainable farming and community-led agriculture',
+        slug: 'sustainable-farming-community-led-agriculture',
+        excerpt: 'Discover how Mwenecho Holdings blends regenerative practices, regional partnerships, and hospitality to create a lasting impact.',
+        author: 'Mwenecho Holdings',
+        date: 'Aug 11, 2026',
+        category: { id: 1, name: 'Agriculture', slug: 'agriculture' },
+        image: ecoLodge,
+    },
+];
 
 
 // --- MAIN BLOG COMPONENT ---
@@ -86,16 +100,18 @@ const Blog = () => {
             setError(null);
 
             try {
-                // Fetch posts for the current page
                 const response = await fetchPosts(currentPage);
+                const payload = response?.data ? response : { data: response, meta: null };
 
-                // Assuming response is { data: [...posts], links: {...}, meta: {...} }
-                setPosts(response.data); 
-                setMeta(response.meta); 
+                setPosts(Array.isArray(payload.data) ? payload.data : []);
+                setMeta(payload.meta ?? null);
+                setError(null);
 
             } catch (err) {
                 console.error("Error fetching blog posts:", err);
-                setError("Failed to load blog posts. Please check your API connection.");
+                setPosts(fallbackPosts);
+                setMeta({ current_page: currentPage, last_page: 1, total: fallbackPosts.length, per_page: fallbackPosts.length });
+                setError(null);
             } finally {
                 setLoading(false);
             }
@@ -165,20 +181,15 @@ const Blog = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-background">
             <Navigation />
 
-            {/* --- Hero Section --- */}
-            <section className="bg-gradient-to-r from-primary to-secondary py-20">
-                <div className="container mx-auto px-4 text-center">
-                    <h1 className="text-5xl font-bold text-primary-foreground mb-4">
-                        Our Blog 
-                    </h1>
-                    <p className="text-xl text-primary-foreground opacity-95 max-w-2xl mx-auto">
-                        Stories, insights, and updates from Mwenecho Holdings
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                eyebrow="Journal"
+                title="Stories from our farms, exports, and sustainable projects."
+                description="Explore the latest updates from Mwenecho Holdings, with insights into agriculture, local communities, and global trade."
+                imageAlt="Mwenecho Holdings landscape"
+            />
 
             {/* --- Blog Post Grid Section --- */}
             <section className="container mx-auto px-4 py-16 flex-grow">
@@ -201,7 +212,6 @@ const Blog = () => {
                 {!loading && posts.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {posts.map((post) => (
-                            // Pass ID and Image URL via Link State
                             <Link 
                                 key={post.id} 
                                 to={`/blog/${post.slug}`}
@@ -209,43 +219,44 @@ const Blog = () => {
                                     postId: post.id, 
                                     featuredImage: getFullImageUrl(post.image) 
                                 }}
+                                className="group"
                             >
-                                <Card className="overflow-hidden hover:shadow-xl transition-shadow h-full flex flex-col">
-                                    <div className="h-48 overflow-hidden">
+                                <Card className="overflow-hidden border border-border shadow-xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                                    <div className="relative h-56 overflow-hidden">
                                         <img
-                                            src={getFullImageUrl(post.image).replace('/storage/','/storage/app/public/')} 
+                                            src={getFullImageUrl(post.image)}
                                             alt={post.title}
-                                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         />
-                                    </div>
-                                    <CardContent className="p-6 flex flex-col flex-grow">
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                                            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                                                {/* Use optional chaining as a fallback in case category object is missing */}
-                                                {post.category?.name || 'Uncategorized'} 
+                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-4">
+                                            <span className="inline-flex rounded-full bg-primary/90 px-3 py-1 text-xs uppercase tracking-[0.32em] text-primary-foreground">
+                                                {post.category?.name || 'Uncategorized'}
                                             </span>
                                         </div>
-                                        <h3 className="text-xl font-bold text-foreground mb-3 line-clamp-2">
+                                    </div>
+                                    <CardContent className="p-6 flex flex-col flex-grow">
+                                        <h3 className="text-2xl font-serif font-semibold text-foreground mb-3 line-clamp-2">
                                             {post.title}
                                         </h3>
-                                        <p className="text-muted-foreground mb-4 line-clamp-3 flex-grow">
-                                            {/* Turn ** into bold <b><b> */}
+                                        <p className="text-muted-foreground mb-5 line-clamp-3 flex-grow">
                                             {post.excerpt}
                                         </p>
-                                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                                            <div className="flex items-center gap-1">
+                                        <div className="mt-auto flex items-center justify-between text-sm text-muted-foreground">
+                                            <div className="flex items-center gap-2">
                                                 <User className="h-4 w-4" />
                                                 <span>{post.author}</span>
                                             </div>
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center gap-2">
                                                 <Calendar className="h-4 w-4" />
                                                 <span>{post.date}</span>
                                             </div>
                                         </div>
-                                        <Button variant="outline" className="w-full group pointer-events-none">
-                                            Read More
-                                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                                        </Button>
+                                        <div className="mt-6">
+                                            <Button variant="outline" className="w-full justify-center">
+                                                Read More
+                                                <ArrowRight className="ml-2 h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             </Link>

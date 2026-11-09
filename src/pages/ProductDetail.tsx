@@ -8,11 +8,9 @@ import ProductInquiry from "@/components/ProductInquiry";
 // --- UI Component Imports ---
 import { Separator } from "@/components/ui/separator"; 
 import { 
-    Loader2, MessageCircle, Maximize, ChevronLeft, ChevronRight, Check, Zap, 
-    ArrowRight, XCircle, ArrowLeft, Mail, ExternalLink // ⭐️ ExternalLink is used for the Copy button
-} from "lucide-react"; 
-// ⭐️ IMPORTED Social Media Icons (Requires 'react-icons' package: npm install react-icons)
-import { FaTwitter, FaFacebook, FaLinkedin, FaWhatsapp } from 'react-icons/fa'; 
+    Loader2, MessageCircle, Maximize, ChevronLeft, ChevronRight, Check, 
+    ArrowRight, XCircle, ArrowLeft, Mail, ExternalLink, Facebook, Twitter, Linkedin 
+} from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -69,7 +67,7 @@ const RelatedProductCard = ({ product }: { product: RelatedProduct }) => {
     
 
     const handleProductClick = () => {
-        navigate(`/shop/${product.slug}`);
+        navigate(`/farmers-market/${product.slug}`);
     };
 
     return (
@@ -95,14 +93,13 @@ const RelatedProductCard = ({ product }: { product: RelatedProduct }) => {
 // --- ⭐️ NEW HELPER COMPONENT: Social Share Buttons (Consistent UI) ---
 interface ShareButtonsProps {
     productName: string;
-    productSlug: string; 
 }
 
 const ShareButtons = ({ productName }: ShareButtonsProps) => {
     const { toast } = useToast();
     // Get the current URL dynamically for sharing
     // NOTE: This assumes the component is rendered on the product detail page, making the current URL the share URL.
-    const shareUrl = window.location.href; 
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
     const shareText = `Check out this amazing product: ${productName} on my shop!`;
 
     // Encode all components for URL safety
@@ -113,32 +110,27 @@ const ShareButtons = ({ productName }: ShareButtonsProps) => {
     const socialLinks = [
         { 
             name: 'Facebook', 
-            icon: FaFacebook, 
-            // Use specific brand colors but keep consistent button shape and size
+            Icon: Facebook, 
             color: 'bg-blue-600 hover:bg-blue-700', 
-            // Facebook Share URL structure
             url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}` 
         },
         { 
             name: 'Twitter', 
-            icon: FaTwitter, 
+            Icon: Twitter, 
             color: 'bg-blue-400 hover:bg-blue-500', 
-            // Twitter/X Share URL structure
             url: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}` 
         },
         { 
             name: 'LinkedIn', 
-            icon: FaLinkedin, 
+            Icon: Linkedin, 
             color: 'bg-blue-700 hover:bg-blue-800', 
-            // LinkedIn Share URL structure
             url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedText}` 
         },
-        { 
-            name: 'WhatsApp', 
-            icon: FaWhatsapp, 
-            color: 'bg-green-500 hover:bg-green-600', 
-            // WhatsApp Share URL structure
-            url: `https://wa.me/?text=${encodedText}%20${encodedUrl}` 
+        {
+            name: 'WhatsApp',
+            Icon: MessageCircle,
+            color: 'bg-primary hover:bg-primary/80',
+            url: `https://wa.me/?text=${encodedText}%20${encodedUrl}`
         },
     ];
     
@@ -171,11 +163,10 @@ const ShareButtons = ({ productName }: ShareButtonsProps) => {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    // Consistent button styling with rounded-full, fixed size (p-2 translates to a good size)
                     className={`p-2 rounded-full text-white transition-colors duration-200 ${link.color} flex items-center justify-center shadow-md`}
                     aria-label={`Share on ${link.name}`}
                 >
-                    <link.icon className="h-4 w-4" />
+                    <link.Icon className="h-4 w-4" />
                 </a>
             ))}
             {/* Copy Link Button - Using the existing Button component style (variant="outline", size="icon") */}
@@ -184,7 +175,7 @@ const ShareButtons = ({ productName }: ShareButtonsProps) => {
                 size="icon" 
                 onClick={handleCopyLink}
                 // H-9 w-9 for a slightly larger, accessible button with a subtle shadow
-                className="ml-2 h-9 w-9 text-foreground border-border hover:bg-primary/10 shadow-md"
+                className="ml-2 h-9 w-9 text-foreground border-border hover:bg-muted shadow-sm"
                 aria-label="Copy link to clipboard"
             >
                 <ExternalLink className="h-4 w-4" />
@@ -355,16 +346,16 @@ const ProductDetail = () => {
                 <Navigation />
                 <div className="container mx-auto px-4 py-32 text-center">
                     <h1 className="text-3xl font-bold text-destructive mb-6">Product Not Found</h1>
-                    <Button onClick={() => navigate("/shop")}>
+                    <Button onClick={() => navigate("/farmers-market")}> 
                         <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Shop
+                        Back to Farmers Market
                     </Button>
                 </div>
                 <Footer />
             </div>
         );
     }
-    
+
     const categoryName = typeof product.category === 'string' 
         ? product.category 
         : product.category?.name || 'Product';
@@ -378,11 +369,11 @@ const ProductDetail = () => {
             <section className="container mx-auto px-4 py-6 sm:py-8 flex-grow">
                 <Button
                     variant="ghost"
-                    onClick={() => navigate("/shop")}
+                    onClick={() => navigate("/farmers-market")}
                     className="mb-4 sm:mb-6"
                 >
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Shop
+                    Back to Farmers Market
                 </Button>
 
                 <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr_250px] gap-6 sm:gap-8 lg:gap-12">
@@ -485,7 +476,7 @@ const ProductDetail = () => {
                         {/* Product Info */}
                         <div className="p-4 sm:p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
                             {/* Category */}
-                            <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-3 sm:mb-4">
+                            <span className="inline-block px-3 py-1 rounded-md bg-muted text-primary text-xs sm:text-sm font-medium mb-3 sm:mb-4">
                                 {categoryName}
                             </span>
                             
@@ -496,7 +487,6 @@ const ProductDetail = () => {
                             {/* ⭐️ NEW: Share Buttons Integration ⭐️ */}
                             <ShareButtons 
                                 productName={product.name} 
-                                productSlug={product.slug} 
                             />
                             
                             <Separator className="my-4" />
@@ -517,7 +507,7 @@ const ProductDetail = () => {
                             <div className="flex flex-wrap gap-3">
                                 <Button 
                                     onClick={handleWhatsAppContact} 
-                                    className="flex-1 sm:flex-initial bg-green-500 hover:bg-green-600 text-white shadow-md" 
+                                    className="flex-1 sm:flex-initial bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-md" 
                                 >
                                     <MessageCircle className="mr-2 h-4 w-4" />
                                     WhatsApp Inquiry

@@ -13,6 +13,18 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)"],
+        serif: ["var(--font-serif)"],
+      },
+      backgroundImage: {
+        "hero-gradient": "radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 40%), linear-gradient(180deg, rgba(143,36,21,0.95), rgba(30,94,56,0.18))",
+        "card-glow": "radial-gradient(circle at top left, rgba(255, 255, 255, 0.16), transparent 35%)",
+      },
+      boxShadow: {
+        soft: "0 20px 60px -28px rgba(15, 23, 42, 0.24)",
+        accent: "0 26px 80px -40px rgba(143, 36, 21, 0.32)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -87,5 +99,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;

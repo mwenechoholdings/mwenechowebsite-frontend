@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/PageHero";
+import heroFarm from "@/assets/hero-farm.jpg";
 // Import the addBooking function from your service file
 import { addBooking } from "@/service/api"; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -121,14 +123,18 @@ const Book = () => {
     ];
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-background">
             <Navigation />
             
-            <div className="container mx-auto px-4 py-12">
-                <h1 className="text-5xl font-bold text-foreground mb-4 text-center">Book Your Experience</h1>
-                <p className="text-xl text-muted-foreground text-center mb-12 max-w-3xl mx-auto">
-                    Choose from our tour packages or create a custom experience. We can't wait to host you!
-                </p>
+            <PageHero
+                eyebrow="Plan your visit"
+                title="Book your experience"
+                description="Choose from our tour packages or create a custom experience. We can’t wait to host you."
+                image={heroFarm}
+                imageAlt="The landscape around Mwenecho Holdings"
+            />
+
+            <div className="container mx-auto px-4 py-10 sm:py-12">
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
                     {/* Tour Packages */}
@@ -136,7 +142,7 @@ const Book = () => {
                         <h2 className="text-3xl font-bold text-primary mb-6">Tour Packages</h2>
                         <div className="space-y-6">
                             {tourPackages.map((pkg, index) => (
-                                <Card key={index} className="rounded-xl shadow-lg">
+                                <Card key={index} className="rounded-lg border border-border bg-card shadow-sm">
                                     <CardHeader>
                                         <CardTitle className="text-2xl">{pkg.title}</CardTitle>
                                         <p className="text-muted-foreground">{pkg.duration}</p>
@@ -167,7 +173,7 @@ const Book = () => {
 
                     {/* Booking Form */}
                     <div>
-                        <Card className="rounded-xl shadow-2xl">
+                        <Card className="rounded-lg border border-border bg-card shadow-md">
                             <CardHeader>
                                 <CardTitle className="text-2xl">Request a Booking</CardTitle>
                             </CardHeader>

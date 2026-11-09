@@ -13,8 +13,8 @@ import { Mail, Check, AlertTriangle, Loader2 } from "lucide-react";
 interface StayUpdatedCtaProps {
     title?: string;
     description?: string;
-    // CRITICAL: Endpoint for the subscription API call must be passed in by the consumer.
-    subscriptionEndpoint: string; 
+    // Optional endpoint path for the subscription API call.
+    subscriptionEndpoint?: string; 
 }
 
 
@@ -23,8 +23,7 @@ interface StayUpdatedCtaProps {
 const StayUpdatedCta: React.FC<StayUpdatedCtaProps> = ({
     title = "Stay Updated",
     description = "Subscribe to our newsletter for the latest updates and exclusive content.",
-    // NOTE: This property is now REQUIRED by the interface, ensuring it's always explicitly set.
-    subscriptionEndpoint 
+    subscriptionEndpoint = "public/subscribe"
 }) => {
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -41,8 +40,9 @@ const StayUpdatedCta: React.FC<StayUpdatedCtaProps> = ({
         setMessage('');
 
         try {
+            const normalizedEndpoint = subscriptionEndpoint.replace(/^\/+/, '');
             // Send the subscription request using the dynamically provided endpoint
-            const response = await api.post(subscriptionEndpoint, { email });
+            const response = await api.post(normalizedEndpoint, { email });
 
             // Set success message
             setMessage(response.data.message || 'Subscription successful! Please check your email.');
@@ -104,9 +104,9 @@ const StayUpdatedCta: React.FC<StayUpdatedCtaProps> = ({
     // --- MAIN RENDER ---
 
     return (
-        <div className="bg-muted py-16">
+        <div className="hero-panel py-16">
             <div className="container mx-auto px-4 text-center">
-                <h2 className="text-3xl font-bold text-foreground mb-4">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
                     {title}
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">

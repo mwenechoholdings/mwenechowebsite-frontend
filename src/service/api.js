@@ -2,12 +2,16 @@ import axios from 'axios';
 
 // --- Configuration ---
 // Base URL for the public API (http://127.0.0.1:8000/api/)
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// Prefer Vite env value but fall back to localhost Laravel API when missing.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+
+// Ensure the Axios base URL does not accidentally include a trailing slash
+const normalizedBaseURL = API_BASE_URL?.replace(/\/+$/, "") || "";
 
 // 1. Public API Instance
 // This is a simple axios instance used for all public GET requests.
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: normalizedBaseURL,
     headers: {
         'Content-Type': 'application/json',
         // Important for Laravel API responses
@@ -35,10 +39,10 @@ export const fetchEvents = () => {
     return api.get('events'); 
 };
 export const fetchGalleryImages = async () => {
-    return api.get('/gallery-images'); // api is your configured axios instance
-}
+    return api.get('gallery-images'); // api is your configured axios instance
+};
 export const addBooking = async (bookingData) => {
-   return api.post('/bookings', bookingData);
+   return api.post('bookings', bookingData);
 };
 /**
  * Fetches a paginated list of blog posts (GET /api/posts?page=X).

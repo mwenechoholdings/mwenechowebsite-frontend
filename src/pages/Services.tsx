@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/PageHero";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -52,60 +53,73 @@ const Services = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-5xl font-bold text-foreground mb-4 text-center">Our Services</h1>
-        <p className="text-xl text-muted-foreground text-center mb-12 max-w-3xl mx-auto">
-          Discover the diverse experiences we offer—from hands-on farming and cultural celebrations to global agricultural trade.
-        </p>
+      <PageHero
+        eyebrow="Services & experiences"
+        title="Heritage services grounded in sustainable agriculture and culture."
+        description="Explore our carefully curated activities—from estate farming and community tourism to agricultural trade and export services."
+        image={livestock}
+        imageAlt="Livestock at the Mwenecho Holdings farm"
+      />
 
+      <div className="container mx-auto px-4 py-16">
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="space-y-12">
+          <div className="grid gap-10">
             {services.map((service, index) => {
               const { icon, img } = getServiceAssets(service.name);
               const isEven = index % 2 === 0;
 
               return (
-                <Card key={service.id} className="overflow-hidden">
-                  <div className="grid grid-cols-1 md:grid-cols-2">
-                    {/* Alternate image position for design variety */}
-                    <div className={`h-64 md:h-auto ${!isEven ? 'md:order-2' : ''}`}>
+                <Card key={service.id} className="overflow-hidden border border-border shadow-xl">
+                  <div className="grid grid-cols-1 lg:grid-cols-2">
+                    <div className={`relative h-72 ${!isEven ? 'lg:order-2' : ''}`}>
                       {img ? (
                         <img src={img} alt={service.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="bg-primary/10 h-full w-full flex items-center justify-center">
-                           {icon}
+                        <div className="h-full w-full bg-muted flex items-center justify-center">
+                          {icon}
                         </div>
                       )}
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-6 text-primary-foreground">
+                        <p className="text-sm uppercase tracking-[0.32em] font-semibold">{service.category}</p>
+                      </div>
                     </div>
 
-                    <CardContent className={`p-8 ${!isEven ? 'md:order-1' : ''}`}>
-                      <div className="flex items-center mb-4">
-                        {icon}
-                        <CardTitle className="text-3xl">{service.name}</CardTitle>
+                    <CardContent className={`p-10 ${!isEven ? 'lg:order-1' : ''}`}>
+                      <div className="mb-5">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="rounded-full bg-secondary/10 p-3 text-secondary">{icon}</div>
+                          <div>
+                            <p className="text-sm uppercase tracking-[0.32em] text-muted-foreground">Service</p>
+                            <h2 className="text-3xl font-serif font-semibold text-foreground">{service.name}</h2>
+                          </div>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">{service.description.join(' ')}</p>
                       </div>
-                      
-                      {/* Description Bullet Points */}
-                      <ul className="space-y-2 mb-6">
-                        {service.description.map((point, idx) => (
-                          <li key={idx} className="flex items-start">
-                            <span className="text-accent mr-2">•</span>
-                            <span className="text-muted-foreground">{point}</span>
-                          </li>
-                        ))}
-                      </ul>
 
-                      <div className="flex items-center justify-between">
-                         <span className="text-2xl font-bold text-primary">${service.price}</span>
-                         <Link to="/contact">
-                            <Button>Inquire Now</Button>
-                         </Link>
+                      <div className="grid gap-3">
+                        {service.description.map((point, idx) => (
+                          <div key={idx} className="rounded-md border border-border bg-muted p-4 text-muted-foreground">
+                            <span className="block font-semibold text-foreground mb-1">{idx + 1}. </span>
+                            <p>{point}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                          <p className="text-muted-foreground text-sm">Starting at</p>
+                          <p className="text-3xl font-bold text-primary">${service.price}</p>
+                        </div>
+                        <Link to="/contact" className="w-full sm:w-auto">
+                          <Button size="lg" className="w-full sm:w-auto">Inquire Now</Button>
+                        </Link>
                       </div>
                     </CardContent>
                   </div>

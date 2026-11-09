@@ -2,9 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 // External Components
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/PageHero";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { X, Loader2, Image as ImageIcon, Zap } from "lucide-react";
 import Masonry from "react-masonry-css";
+import culturalDance from "@/assets/cultural-dance.jpg";
 
 // API Imports (Assuming these are exported from your service file)
 // Note: Adjusted the import path based on typical project structure.
@@ -98,20 +100,18 @@ const Gallery = () => {
     };
     
     return (
-        <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
+        <div className="min-h-screen bg-background">
             <Navigation />
-            
-            <div className="container mx-auto px-4 py-8 sm:py-12"> {/* Reduced vertical padding on mobile */}
-                <div className="text-center mb-10 sm:mb-16 animate-fade-in"> {/* Reduced bottom margin on mobile */}
-                    <h1 className="text-4xl sm:text-6xl font-bold bg-clip-text text-transparent mb-4
-                                   bg-gradient-to-r from-primary via-primary/80 to-primary">
-                        Gallery
-                    </h1>
-                    <div className="h-1 w-20 sm:w-24 bg-gradient-to-r from-primary to-primary/50 mx-auto mb-4 sm:mb-6 rounded-full"></div>
-                    <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto"> {/* Reduced text size on mobile */}
-                        Explore the beauty of Mwenecho Holdings through images of our farm, cultural events, and eco-lodges.
-                    </p>
-                </div>
+
+            <PageHero
+                eyebrow="Immersive gallery"
+                title="A curated visual journey through estate life."
+                description="Explore the landscapes, traditions, and farm-to-table moments that define Mwenecho Holdings."
+                image={culturalDance}
+                imageAlt="Cultural performance at Mwenecho Holdings"
+            />
+
+            <div className="container mx-auto px-4 py-8 sm:py-12">
 
                 {galleryImages.length > 0 ? (
                     <Masonry
@@ -127,9 +127,8 @@ const Gallery = () => {
                                     alt: image.caption,
                                     category: image.category
                                 })}
-                                className="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer mb-4 sm:mb-6
-                                           bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-sm
-                                           border border-border/50 hover:border-primary/50
+                                className="group relative aspect-square overflow-hidden rounded-md cursor-pointer mb-4 sm:mb-6
+                                           bg-muted border border-border hover:border-primary/50
                                            shadow-lg hover:shadow-2xl hover:shadow-primary/20
                                            transition-all duration-500 hover:scale-[1.02]"
                             >
@@ -147,7 +146,7 @@ const Gallery = () => {
                                     </div>
                                 </div>
                                 <div className="absolute inset-0 ring-2 ring-primary/0 group-hover:ring-primary/50
-                                                rounded-2xl transition-all duration-300"></div>
+                                                rounded-md transition-all duration-300"></div>
                             </div>
                         ))}
                     </Masonry>
@@ -159,13 +158,11 @@ const Gallery = () => {
                 )}
 
 
-                <div className="mt-12 sm:mt-20 text-center p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent
-                             border border-primary/20 backdrop-blur-sm animate-fade-in">
+                <div className="mt-12 sm:mt-20 rounded-lg border border-border bg-card p-6 text-center shadow-sm sm:p-8 animate-fade-in">
                     <p className="text-base sm:text-lg text-muted-foreground mb-3 sm:mb-4">
                         Want to capture your own moments at Mwenecho Holdings?
                     </p>
-                    {/* Reduced font size for the CTA heading on mobile */}
-                    <p className="text-xl sm:text-2xl text-foreground font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                    <p className="text-xl sm:text-2xl text-foreground font-semibold">
                         Book your visit today and create lasting memories!
                     </p>
                 </div>

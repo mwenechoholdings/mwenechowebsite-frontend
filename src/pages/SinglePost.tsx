@@ -214,7 +214,7 @@ const ShareButtons: React.FC<ShareButtonsProps> = ({ postTitle }) => {
                 variant="outline" 
                 size="icon" 
                 onClick={handleCopyLink}
-                className="h-9 w-9 text-primary border-primary/50 hover:bg-primary/10 shadow-sm"
+                className="h-9 w-9 text-primary border-border hover:bg-muted shadow-sm"
                 aria-label="Copy link to clipboard"
             >
                 <ExternalLink className="h-4 w-4" />
@@ -269,8 +269,6 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({ currentPostId, categoryName
                         <Link 
                             to={`/blog/${post.slug}`} 
                             className="hover:text-primary transition-colors block"
-                            // Force page reload and scroll to top for fresh component
-                            onClick={() => { window.scrollTo(0, 0); setTimeout(() => window.location.reload(), 0); }} 
                         >
                             <h4 className="font-semibold text-base line-clamp-2">{post.title}</h4>
                         </Link>
@@ -398,7 +396,7 @@ const BlogPost = () => {
                                 <img
                                     src={imageSrc.replace('/storage/','/storage/app/public/')}
                                     alt={post.title}
-                                    className="w-full h-56 sm:h-72 lg:h-96 object-cover rounded-xl shadow-lg mb-6 sm:mb-8"
+                                    className="w-full h-56 sm:h-72 lg:h-96 object-cover rounded-lg shadow-sm mb-6 sm:mb-8"
                                     onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/1024x500/A5B4FC/FFFFFF?text=Image+Not+Found'; }}
                                 />
                             )}
@@ -417,7 +415,7 @@ const BlogPost = () => {
                                     <Clock className="h-4 w-4 text-primary" />
                                     <span>{post.readTime}</span> 
                                 </div>
-                                <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium self-start">
+                                <span className="px-3 py-1 rounded-md bg-muted text-primary text-xs sm:text-sm font-medium self-start">
                                     {post.category?.name || 'Uncategorized'}
                                 </span>
                             </div>

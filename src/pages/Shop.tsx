@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import PageHero from "@/components/PageHero";
+import heroFarm from "@/assets/hero-farm.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // 💡 IMPORT INPUT
 import { Loader2, ShoppingCart, ChevronLeft, ChevronRight, Search } from "lucide-react"; // 💡 IMPORT SEARCH ICON
@@ -117,7 +119,7 @@ const Shop = () => {
     
     // Handler to navigate to the product detail page
     const handleProductClick = (slug: string) => {
-        navigate(`/farmers-market/${slug}`); // Assuming the route is /shop/:slug
+        navigate(`/farmers-market/${slug}`);
     };
     
 
@@ -151,44 +153,40 @@ const Shop = () => {
             <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {products.map((product) => (
-                        <Card 
-                            key={product.id} 
-                            className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer" 
-                            onClick={() => handleProductClick(product.slug)} 
+                        <Card
+                            key={product.id}
+                            className="overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer"
+                            onClick={() => handleProductClick(product.slug)}
                         >
-                            <div className="h-48 overflow-hidden">
-                                <img 
-                                    src={product.featured_image_url.replace('/storage/','/storage/app/public/')} 
+                            <div className="relative h-52 overflow-hidden">
+                                <img
+                                    src={product.featured_image_url.replace('/storage/','/storage/app/public/')}
                                     alt={product.name}
-                                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-[1.03]" 
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                 />
+                                <span className="absolute left-4 top-4 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-slate-900 shadow-sm">
+                                    {getCategoryName(product.category)}
+                                </span>
                             </div>
                             <CardContent className="p-6">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h3 className="text-xl font-bold text-foreground">{product.name}</h3>
-                                    <span className="text-sm font-medium px-3 py-1 rounded-full bg-primary/10 text-primary">
-                                        {getCategoryName(product.category)}
-                                    </span>
+                                <h3 className="text-2xl font-semibold text-foreground mb-3 line-clamp-2">{product.name}</h3>
+                                <p className="text-muted-foreground mb-5 line-clamp-3">{product.description}</p>
+                                <div className="flex items-center justify-between gap-4">
+                                    <p className="text-2xl font-bold text-primary">{product.display_price}</p>
+                                    <Button
+                                        variant="secondary"
+                                        className="rounded-full px-5 py-2"
+                                        onClick={() => handleProductClick(product.slug)}
+                                    >
+                                        View
+                                    </Button>
                                 </div>
-                                <p className="text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
-                                <p className="text-2xl font-bold text-primary">{product.display_price}</p>
                             </CardContent>
-                            <CardFooter className="p-6 pt-0">
-                                <Button 
-                                    className="w-full" 
-                                    size="lg"
-                                    onClick={() => handleProductClick(product.slug)}
-                                >
-                                    <ShoppingCart className="mr-2 h-5 w-5" />
-                                    View Details
-                                </Button>
-                            </CardFooter>
                         </Card>
                     ))}
                 </div>
 
-                {/* Pagination Controls */}
-                <div className="flex justify-center items-center space-x-2 mt-12">
+                <div className="mt-10 flex items-center justify-center gap-3">
                     <Button
                         variant="outline"
                         onClick={() => handlePageChange(currentPage - 1)}
@@ -217,17 +215,13 @@ const Shop = () => {
         <div className="min-h-screen flex flex-col">
             <Navigation />
             
-            {/* ... (Hero Section Unchanged) ... */}
-            <section className="bg-gradient-to-r from-primary to-secondary py-20">
-                <div className="container mx-auto px-4 text-center">
-                    <h1 className="text-5xl font-bold text-primary-foreground mb-4">
-                        Farmers Market
-                    </h1>
-                    <p className="text-xl text-primary-foreground opacity-95 max-w-2xl mx-auto">
-                        Quality agricultural products for export, import, and local markets
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                eyebrow="Farmers market"
+                title="Export-grade produce and farm supplies for global buyers."
+                description="Discover certified Malawian products, modern farming equipment, and trusted trade services for retailers and exporters."
+                image={heroFarm}
+                imageAlt="Open farmland in Mangochi, Malawi"
+            />
 
             <section className="container mx-auto px-4 py-16 flex-grow">
                 <div className="mb-12">
@@ -240,15 +234,15 @@ const Shop = () => {
                 </div>
                 
                 {/* ⭐️ NEW: Search Bar Component */}
-                <form onSubmit={handleSearchSubmit} className="flex max-w-lg mx-auto mb-12">
+                <form onSubmit={handleSearchSubmit} className="flex max-w-3xl mx-auto mb-12 hero-panel gap-0 items-center">
                     <Input 
                         type="text" 
-                        placeholder="Search products by name or category..." 
+                        placeholder="Search farmers market products..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-grow h-11 px-4 py-2 text-lg border-r-0 rounded-r-none"
+                        className="flex-grow h-14 px-4 py-2 text-lg border-r-0 rounded-r-none bg-background"
                     />
-                    <Button type="submit" size="lg" className="rounded-l-none" disabled={isLoading}>
+                    <Button type="submit" size="lg" className="rounded-l-none h-14" disabled={isLoading}>
                         <Search className="h-5 w-5 mr-2" />
                         Search
                     </Button>

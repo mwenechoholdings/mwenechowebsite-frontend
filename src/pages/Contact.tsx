@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/PageHero";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -163,18 +164,15 @@ const Contact = () => {
     <div className="min-h-screen">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-5xl font-bold text-foreground mb-4 text-center">Contact Us</h1>
-        {webDetails?.business_name && (
-          <p className="text-2xl font-medium text-primary text-center mb-2">
-            {webDetails.business_name}
-          </p>
-        )}
-        <p className="text-xl text-muted-foreground text-center mb-4 max-w-3xl mx-auto">
-          Have questions or want to learn more? We're here to help. Reach out to us anytime!
-        </p>
+      <PageHero
+        eyebrow="Get in touch"
+        title="Contact Mwenecho Holdings"
+        description="Have questions or want to plan your visit? Our team is ready to help with booking, trade enquiries, and estate experiences."
+      />
+
+      <div className="container mx-auto px-4 py-10 sm:py-12">
         {webDetails?.business_description && (
-          <p className="text-base text-muted-foreground text-center mb-12 max-w-3xl mx-auto">
+          <p className="mx-auto mb-8 max-w-4xl border-l-2 border-secondary pl-5 text-muted-foreground">
             {webDetails.business_description}
           </p>
         )}

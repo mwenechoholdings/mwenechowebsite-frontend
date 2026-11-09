@@ -5,7 +5,9 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import PageHero from "@/components/PageHero";
 import { Calendar, MapPin, Users, Clock, Loader2 } from "lucide-react";
+import culturalDance from "@/assets/cultural-dance.jpg";
 
 // 💡 Import the public-only fetch function
 import { fetchEvents } from '@/service/api'; 
@@ -96,79 +98,89 @@ const Events = () => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen bg-background">
             <Navigation />
-            
-            <div className="container mx-auto px-4 py-12 flex-grow">
-                <h1 className="text-5xl font-bold text-foreground mb-4 text-center">Events & Festivals</h1>
-                <p className="text-xl text-muted-foreground text-center mb-12 max-w-3xl mx-auto">
-                    Join us for exciting cultural celebrations, seasonal festivals, and community gatherings throughout the year.
-                </p>
 
-                <div className="max-w-4xl mx-auto space-y-6">
-                    <h2 className="text-3xl font-bold text-primary mb-6">Upcoming Events</h2>
-                    
-                    {/* --- Dynamic Content Mapping --- */}
-                    {events.length === 0 ? (
-                        <p className="text-center text-lg text-muted-foreground">
-                            No upcoming events are currently scheduled. Check back soon!
+            <PageHero
+                eyebrow="Events & celebrations"
+                title="Experience Malawi’s culture through vibrant festivals and estate gatherings."
+                description="Join our seasonal events, community celebrations, and immersive farm experiences designed to connect you with local traditions and sustainable living."
+                image={culturalDance}
+                imageAlt="Traditional Malawian cultural performance"
+            />
+
+            <div className="container mx-auto px-4 py-16">
+                <div className="grid gap-12">
+                    <div className="text-center max-w-3xl mx-auto">
+                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Upcoming Events</h2>
+                        <p className="text-muted-foreground text-lg md:text-xl">
+                            Discover the latest cultural festivals, agricultural workshops, and community gatherings happening at Mwenecho Holdings.
                         </p>
-                    ) : (
-                        events.map((event) => {
-                            // Format the date/time for display
-                            const { date: formattedDate, time: formattedTime } = formatDate(event.start_time);
-                            
-                            return (
-                                <Card key={event.id} className="hover:shadow-lg transition-shadow">
-                                    <CardHeader>
-                                        <CardTitle className="text-2xl text-foreground">{event.title}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                            {/* Date from API's start_time */}
-                                            <div className="flex items-center text-muted-foreground">
-                                                <Calendar className="h-5 w-5 mr-2 text-accent" />
-                                                <span>{formattedDate}</span> 
-                                            </div>
-                                            {/* Time from API's start_time */}
-                                            <div className="flex items-center text-muted-foreground">
-                                                <Clock className="h-5 w-5 mr-2 text-accent" />
-                                                <span>{formattedTime}</span>
-                                            </div>
-                                            {/* Location */}
-                                            <div className="flex items-center text-muted-foreground">
-                                                <MapPin className="h-5 w-5 mr-2 text-accent" />
-                                                <span>{event.location}</span>
-                                            </div>
-                                            {/* Capacity from API's max_attendees */}
-                                            <div className="flex items-center text-muted-foreground">
-                                                <Users className="h-5 w-5 mr-2 text-accent" />
-                                                <span>{event.max_attendees} people</span> 
-                                            </div>
-                                        </div>
-                                        <p className="text-muted-foreground mb-4">{event.description}</p>
-                                        {/* You'd use event.id here to link to a booking page */}
-                                        <Button>Book Tickets</Button> 
-                                    </CardContent>
-                                </Card>
-                            );
-                        })
-                    )}
-                    {/* --- End Dynamic Content --- */}
+                    </div>
 
-                    
-                    {/* 💡 ACTION: Use the reusable StayUpdatedCta component */}
-                    {/* Customize title and description for the events context. 
-                    The subscriptionEndpoint defaults to the unified endpoint in StayUpdatedCta. */}
-                    <div className="mt-12">
+                    {events.length === 0 ? (
+                        <div className="rounded-lg border border-border bg-muted p-8 text-center sm:p-10">
+                            <p className="text-xl font-semibold text-foreground mb-3">No upcoming events currently scheduled.</p>
+                            <p className="text-muted-foreground">Check back soon for new festival dates and heritage experiences.</p>
+                        </div>
+                    ) : (
+                        <div className="grid gap-8">
+                            {events.map((event) => {
+                                const { date: formattedDate, time: formattedTime } = formatDate(event.start_time);
+
+                                return (
+                                    <Card key={event.id} className="overflow-hidden border border-border shadow-xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                                        <CardContent className="p-8">
+                                            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+                                                <div className="space-y-4">
+                                                    <div className="inline-flex items-center rounded-full bg-secondary/10 px-3 py-1 text-sm uppercase tracking-[0.28em] text-secondary font-semibold">
+                                                        Featured Event
+                                                    </div>
+                                                    <h3 className="text-3xl font-serif font-bold text-foreground">{event.title}</h3>
+                                                    <p className="text-muted-foreground max-w-2xl">{event.description}</p>
+                                                </div>
+                                                <div className="grid gap-3 text-sm text-muted-foreground">
+                                                    <div className="rounded-md border border-border bg-muted p-4">
+                                                        <div className="font-semibold text-foreground mb-2">Date</div>
+                                                        <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-accent" />{formattedDate}</div>
+                                                    </div>
+                                                    <div className="rounded-md border border-border bg-muted p-4">
+                                                        <div className="font-semibold text-foreground mb-2">Time</div>
+                                                        <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-accent" />{formattedTime}</div>
+                                                    </div>
+                                                    <div className="rounded-md border border-border bg-muted p-4">
+                                                        <div className="font-semibold text-foreground mb-2">Location</div>
+                                                        <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-accent" />{event.location}</div>
+                                                    </div>
+                                                    <div className="rounded-md border border-border bg-muted p-4">
+                                                        <div className="font-semibold text-foreground mb-2">Capacity</div>
+                                                        <div className="flex items-center gap-2"><Users className="h-4 w-4 text-accent" />{event.max_attendees} people</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-8 flex flex-wrap gap-3">
+                                                <Button className="min-w-[180px] bg-secondary text-secondary-foreground hover:bg-secondary/90">Book Tickets</Button>
+                                                <Button variant="outline" className="min-w-[180px]">View Details</Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    <div className="rounded-lg border border-border bg-muted p-8 text-center">
+                        <h3 className="text-3xl font-bold text-foreground mb-3">Want event updates first?</h3>
+                        <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+                            Subscribe to our newsletter and be the first to know when new festivals, workshops, and tours are announced.
+                        </p>
                         <StayUpdatedCta
-                            subscriptionEndpoint="/public/subscribe"
-                            title="Grow Smarter: Get Our Latest Posts!"
-                            description="Join our community! Subscribe for weekly deep dives into sustainable agriculture, eco-tourism best practices, and rural development news."
+                            subscriptionEndpoint="public/subscribe"
+                            title="Join Our Event Community"
+                            description="Get early access to event passes, seasonal announcements, and cultural experiences from Mwenecho Holdings."
                         />
                     </div>
-                    {/* --- End CTA --- */}
-
                 </div>
             </div>
 
